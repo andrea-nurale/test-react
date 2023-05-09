@@ -2,11 +2,15 @@
 
 - Creare la rotta customers.
 - Creare la tabella customers.
-- Create il modal per inserire un nuovo customer, modificarlo, cancellarlo.
+- Creare il button new e nella tabella i button edit e delete
+- Create il form (modal) per inserire un nuovo stocks, modificarlo, cancellarlo.
+- Creare le relative validazioni.
 
 - Creare la rotta stocks.
 - Creare la tabella stocks.
-- Create il modal per inserire un nuovo stocks, modificarlo, cancellarlo.
+- Creare il button new e nella tabella i button edit e delete.
+- Create il form (modal) per inserire un nuovo stocks, modificarlo, cancellarlo.
+- Creare le relative validazioni.
 
 
 Bonus:
