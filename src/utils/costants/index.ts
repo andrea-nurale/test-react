@@ -6,3 +6,5 @@ export const ROUTES = {
 export const SIDEBAR = [
   { name: "Dashboard", href: ROUTES.home, current: true },
 ];
+
+export * from './routes'
