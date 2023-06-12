@@ -2,7 +2,7 @@ import {createAsyncThunk} from "@reduxjs/toolkit";
 import {USERS_URL} from '../../../utils'
 
 
-export const fetchUsers: any = createAsyncThunk(
+export const fetchUsers  = createAsyncThunk(
     'user/fetch',
     async (_, thunkAPI)=>{
         try {

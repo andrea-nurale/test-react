@@ -1,41 +1,91 @@
-import {useDispatch, useSelector} from "react-redux";
-import {increment, decrement} from "../../store/counter/counterSlice";
-import {RootState, fetchUsers} from "../../store";
-import {useEffect} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {AppDispatch, fetchUsers, User,} from "../../store";
+import { useEffect, useState } from "react";
+import schema from './validation'
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  getUsers,
 
-const Home = () => {
-
-  const dispatch = useDispatch()
-  const counter = useSelector((state: RootState) => state.counter.value)
-  const {loading, error, data}= useSelector((state: RootState) => state.users)
-
-  const handleClick = (dec?: string)=>{
-    if(dec){
-      return dispatch(decrement())
-    }
-   dispatch(increment())
-  }
-
-
-  useEffect(()=>{
-
-    dispatch(fetchUsers())
-  }, [])
+} from "../../store/users/selectors";
+import Table from "../../components/Table";
+import { useForm, FormProvider } from "react-hook-form";
+import Modal from "../../components/Modal";
+import Spacer from "../../components/Spacer";
+import Input from "../../components/Input";
 
 
 
-
-  return <div style={{display: 'flex', flexDirection: 'column'}}>
-    Counter: {counter}
-    <button onClick={()=>handleClick()}>
-      Increment
-    </button>
-    <button onClick={()=>handleClick('dec')}>
-      Decrement
-    </button>
-    {error && <div>{error}</div>}
-    {loading ? 'LOADING': data.map(user=><div key={user.id}>{user.email}</div>)}
-    </div>
+const defaultValues =  {
+  email: '',
+  firstName: '',
+  lastName: '',
 }
 
-export default Home
+const COLUMNS = [
+  { columnName: "id", name: "Id" },
+  { columnName: "email", name: "Email" },
+];
+
+
+const Home = () => {
+  const dispatch: AppDispatch = useDispatch();
+  const users = useSelector(getUsers);
+  const [open, setOpen] = useState(false);
+
+
+
+  const methods = useForm<Partial<User>>( {
+    defaultValues,
+    resolver: zodResolver(schema)
+  });
+  const {
+    formState: {errors},
+    trigger
+  }  = methods
+
+
+
+  const handleClose = () => {
+    const errors = trigger()
+    console.log(errors)
+
+    //setOpen(false);
+  };
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  useEffect(() => {
+    dispatch(fetchUsers());
+  }, []);
+
+  const handleSave = async () =>{
+    const hasErrors = await trigger()
+
+    if(!hasErrors){
+      return
+    }
+  }
+
+  console.log(errors?.email?.message);
+  return (
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      <button onClick={handleOpen}>New</button>
+      <Table data={users} columns={COLUMNS} />
+      <Modal show={open}>
+        <FormProvider {...methods}>
+            <Input label='Email' name='email'/>
+          <div style={{color: 'red'}}>{errors?.email?.message}</div>
+            <Input label='First Name' name='firstName'/>
+          <div style={{color: 'red'}}>{errors?.firstName?.message}</div>
+            <Input label='Last name' name='lastName'/>
+          <div style={{color: 'red'}}>{errors?.lastName?.message}</div>
+        <button onClick={handleClose}>Cancel</button>
+        <Spacer width={50} />
+        <button onClick={handleSave}>Save</button>
+        </FormProvider>
+      </Modal>
+    </div>
+  );
+};
+
+export default Home;
